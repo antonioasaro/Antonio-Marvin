@@ -498,6 +498,11 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             // Draw the background.
             if (!isInAmbientMode() && !mMute) {
+                mBackgroundPaint.setARGB(0xFF, 0xFF, 0xFF, 0xFF);
+                mHourPaint.setARGB(0xFF, 0x80, 0x00, 0x00);
+                mMinutePaint.setARGB(0xFF, 0x80, 0x00, 0x00);
+                mColonPaint.setARGB(0xFF, 0xAA, 0x00, 0x00);
+
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
                 canvas.drawBitmap(mSpaceBitmap, 20, 32, null);
                 canvas.drawBitmap(mMarsBitmap, 40, 332, null);
