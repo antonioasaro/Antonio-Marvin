@@ -508,7 +508,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 canvas.drawBitmap(mMarsBitmap, 40, 332, null);
                 canvas.drawBitmap(mEarthBitmap, 330, 120, null);
                 canvas.drawBitmap(mConnBitmap, 270, 50, null);
-                canvas.drawBitmap(mFlagBitmap, 276, 274, null);
+                canvas.drawBitmap(mFlagBitmap, 276, 276, null);
                 canvas.drawBitmap(mMarvinBitmap, 42, 226, null);
             } else {
                 mBackgroundPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
@@ -555,8 +555,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 week_yoff = 176; date_yoff = 184;
             }
             if (getPeekCardPosition().isEmpty()) {
-                canvas.drawText(mDayOfWeekFormat.format(mDate),mXOffset + 58, mYOffset + mLineHeight - week_yoff, mDatePaint);
-                canvas.drawText(mDateFormat.format(mDate),mXOffset + 58, mYOffset + mLineHeight * 2 - date_yoff, mDatePaint);
+                canvas.drawText(mDayOfWeekFormat.format(mDate),mXOffset + 56, mYOffset + mLineHeight - week_yoff, mDatePaint);
+                canvas.drawText(mDateFormat.format(mDate),mXOffset + 56, mYOffset + mLineHeight * 2 - date_yoff, mDatePaint);
             }
 
             // Draw the battery.
@@ -577,6 +577,100 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mBatteryPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
                 canvas.drawRect(16 + b_xoff, 72 + b_yoff, 16 + b_xoff + 24, 72 + b_yoff + 46 * (100 - battery) / 100, mBatteryPaint);
             }
+
+            if (!isInAmbientMode() && !mMute) {
+/*
+                if (showSeconds != true) {
+                    secsView.setColor(Gfx.COLOR_TRANSPARENT);
+                }
+                View.onUpdate(dc);
+                var TracerBitmap;
+*/
+                boolean drawText = true;
+                int xoff, yoff, tpos;
+                Paint BoltClr = new Paint();
+
+                xoff = 170; yoff = 294;
+                tpos = mCalendar.get(Calendar.SECOND);
+                String tstr = Integer.toString(tpos);
+                BoltClr.setARGB(0xFF, 0x0F, 0xDD, 0xAF);
+
+                int xpos, ypos;
+                if (tpos < 10) { tstr = "0" + tstr; };
+                if (tpos == 0) { tpos = 60; }
+                xpos = xoff + 2 * tpos;
+                for (int i = 1; i <= tpos; i++) {
+                    ypos = yoff + (int) (8 * Math.cos(i % (360 / 30)));
+                    if (i != tpos) {
+                        canvas.drawRect(xoff + 2 * i, ypos, xoff + 2 * i + 1, ypos + 1, BoltClr);
+                    } else {
+                        if (drawText) {
+                            canvas.drawText(tstr, xpos, ypos, BoltClr);
+                        } else {
+                            canvas.drawLine(xpos - 6, ypos + 0, xpos + 6, ypos, BoltClr);
+                            canvas.drawLine(xpos + 0, ypos - 6, xpos + 0, ypos + 6, BoltClr);
+                            canvas.drawLine(xpos - 6, ypos - 6, xpos + 6, ypos + 6, BoltClr);
+                            canvas.drawLine(xpos - 6, ypos + 6, xpos + 6, ypos - 6, BoltClr);
+                        }
+                    }
+                }
+/*
+                var xpos, ypos, tpos, tclr, xoff, yoff;
+                if (showSeconds == true) {
+                    tpos = secs;
+                } else {
+                    tpos = mins;
+                }
+                if (showSeconds == true) {
+                    tclr = Gfx.COLOR_BLUE;
+                } else {
+                    tclr = Gfx.COLOR_RED;
+                }
+                if (tpos == 0) {
+                    tpos = 60;
+                }
+                for (var i = 1; i <= tpos; i++) {
+//            secsView.setColor(Gfx.COLOR_TRANSPARENT);
+                    if (showSeconds == true) {
+                        yoff = cosx[i % (360 / 30)];
+                    } else {
+                        yoff = sinx[i % (360 / 30)];
+                    }
+                    xpos = 94 + i - 2 * tall;
+                    ypos = (136 + round + rectangle + tall + tall / 2) - yoff;
+                    if (i == tpos) {
+                        if (tpos == 60) {
+                            if (showSeconds == true) {
+                                TracerBitmap = Ui.loadResource(Rez.Drawables.ExplosionBlueIcon);
+                            } else {
+                                TracerBitmap = Ui.loadResource(Rez.Drawables.ExplosionRedIcon);
+                            }
+                            dc.drawBitmap(xpos - tall / 2, 122 + round + rectangle + tall + tall / 2, TracerBitmap);
+                        } else {
+                            if (showSeconds == true) {
+                                if (secs < 59) {
+                                    secsView.setText(secsString);
+                                    secsView.setLocation(xpos - 6, ypos - 8);
+                                    secsView.setColor(Gfx.COLOR_BLUE);
+                                } else {
+                                    secsView.setColor(Gfx.COLOR_TRANSPARENT);
+                                }
+                            } else {
+                                dc.setColor(tclr, Gfx.COLOR_TRANSPARENT);
+                                dc.drawLine(xpos - 4, ypos + 0, xpos + 4, ypos);
+                                dc.drawLine(xpos + 0, ypos - 4, xpos + 0, ypos + 4);
+                                dc.drawLine(xpos - 4, ypos - 4, xpos + 4, ypos + 4);
+                                dc.drawLine(xpos - 4, ypos + 4, xpos + 4, ypos - 4);
+                            }
+                        }
+                    } else {
+                        dc.setColor(tclr, Gfx.COLOR_TRANSPARENT);
+                        dc.fillRectangle(xpos, ypos, 1, 1);
+                    }
+                }
+*/
+            }
+
         }
 
 
