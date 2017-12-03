@@ -592,7 +592,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
                 xoff = 170; yoff = 294;
                 tpos = mCalendar.get(Calendar.SECOND);
-                String tstr = Integer.toString(tpos);
+                String tstr = Integer.toString(tpos - 1);
                 BoltClr.setARGB(0xFF, 0x0F, 0xDD, 0xAF);
 
                 int xpos, ypos;
