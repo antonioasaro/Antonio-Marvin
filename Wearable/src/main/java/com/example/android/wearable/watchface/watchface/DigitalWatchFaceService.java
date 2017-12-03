@@ -567,7 +567,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 float battery = batteryPct * 100;
 
                 int b_xoff, b_yoff;
-                b_xoff = 30; b_yoff = 80;
+                b_xoff = 24; b_yoff = 80;
                 mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
                 if (battery <= 75) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xFF, 0x00); }
                 if (battery <= 50) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xA5, 0x00); }
@@ -586,89 +586,36 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 View.onUpdate(dc);
                 var TracerBitmap;
 */
-                boolean drawText = true;
                 int xoff, yoff, tpos;
+                int xpos, ypos;
                 Paint BoltClr = new Paint();
 
                 xoff = 170; yoff = 294;
+                BoltClr.setARGB(0xFF, 0x0F, 0xDD, 0xAF);
                 tpos = mCalendar.get(Calendar.SECOND);
                 String tstr = Integer.toString(tpos);
-                BoltClr.setARGB(0xFF, 0x0F, 0xDD, 0xAF);
-
-                int xpos, ypos;
                 if (tpos < 10) { tstr = "0" + tstr; };
+
                 if (tpos == 0) { tpos = 60; }
                 xpos = xoff + 2 * tpos;
                 for (int i = 1; i <= tpos; i++) {
-                    ypos = yoff + (int) (8 * Math.cos(i % (360 / 30)));
+                    ypos = yoff + (int) (10 * Math.cos(i % (360 / 30)));
                     if (i != tpos) {
                         canvas.drawRect(xoff + 2 * i, ypos, xoff + 2 * i + 1, ypos + 1, BoltClr);
                     } else {
-                        if (drawText) {
+                        if (tpos != 60) {
                             canvas.drawText(tstr, xpos, ypos, BoltClr);
                         } else {
-                            canvas.drawLine(xpos - 6, ypos + 0, xpos + 6, ypos, BoltClr);
-                            canvas.drawLine(xpos + 0, ypos - 6, xpos + 0, ypos + 6, BoltClr);
-                            canvas.drawLine(xpos - 6, ypos - 6, xpos + 6, ypos + 6, BoltClr);
-                            canvas.drawLine(xpos - 6, ypos + 6, xpos + 6, ypos - 6, BoltClr);
+                            BoltClr.setStrokeWidth(4);
+                            BoltClr.setARGB(0xFF, 0xFF, 0x00, 0x00);
+                            xpos = xpos + 8; ypos = ypos - 12;
+                            canvas.drawLine(xpos - 12, ypos + 0,  xpos + 12, ypos + 0,  BoltClr);
+                            canvas.drawLine(xpos + 0,  ypos - 12, xpos + 0,  ypos + 12, BoltClr);
+                            canvas.drawLine(xpos - 12, ypos - 12, xpos + 12, ypos + 12, BoltClr);
+                            canvas.drawLine(xpos - 12, ypos + 12, xpos + 12, ypos - 12, BoltClr);
                         }
                     }
                 }
-/*
-                var xpos, ypos, tpos, tclr, xoff, yoff;
-                if (showSeconds == true) {
-                    tpos = secs;
-                } else {
-                    tpos = mins;
-                }
-                if (showSeconds == true) {
-                    tclr = Gfx.COLOR_BLUE;
-                } else {
-                    tclr = Gfx.COLOR_RED;
-                }
-                if (tpos == 0) {
-                    tpos = 60;
-                }
-                for (var i = 1; i <= tpos; i++) {
-//            secsView.setColor(Gfx.COLOR_TRANSPARENT);
-                    if (showSeconds == true) {
-                        yoff = cosx[i % (360 / 30)];
-                    } else {
-                        yoff = sinx[i % (360 / 30)];
-                    }
-                    xpos = 94 + i - 2 * tall;
-                    ypos = (136 + round + rectangle + tall + tall / 2) - yoff;
-                    if (i == tpos) {
-                        if (tpos == 60) {
-                            if (showSeconds == true) {
-                                TracerBitmap = Ui.loadResource(Rez.Drawables.ExplosionBlueIcon);
-                            } else {
-                                TracerBitmap = Ui.loadResource(Rez.Drawables.ExplosionRedIcon);
-                            }
-                            dc.drawBitmap(xpos - tall / 2, 122 + round + rectangle + tall + tall / 2, TracerBitmap);
-                        } else {
-                            if (showSeconds == true) {
-                                if (secs < 59) {
-                                    secsView.setText(secsString);
-                                    secsView.setLocation(xpos - 6, ypos - 8);
-                                    secsView.setColor(Gfx.COLOR_BLUE);
-                                } else {
-                                    secsView.setColor(Gfx.COLOR_TRANSPARENT);
-                                }
-                            } else {
-                                dc.setColor(tclr, Gfx.COLOR_TRANSPARENT);
-                                dc.drawLine(xpos - 4, ypos + 0, xpos + 4, ypos);
-                                dc.drawLine(xpos + 0, ypos - 4, xpos + 0, ypos + 4);
-                                dc.drawLine(xpos - 4, ypos - 4, xpos + 4, ypos + 4);
-                                dc.drawLine(xpos - 4, ypos + 4, xpos + 4, ypos - 4);
-                            }
-                        }
-                    } else {
-                        dc.setColor(tclr, Gfx.COLOR_TRANSPARENT);
-                        dc.fillRectangle(xpos, ypos, 1, 1);
-                    }
-                }
-*/
             }
 
         }
