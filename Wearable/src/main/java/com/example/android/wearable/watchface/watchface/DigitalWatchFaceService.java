@@ -166,6 +166,14 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         float mColonWidth;
         boolean mMute;
 
+        Bitmap mSpaceBitmap;
+        Bitmap mMarsBitmap;
+        Bitmap mEarthBitmap;
+        Bitmap mConnBitmap;
+        Bitmap mFlagBitmap;
+        Bitmap mMarvinBitmap;
+        Intent batteryStatus;
+
         Calendar mCalendar;
         Date mDate;
         SimpleDateFormat mDayOfWeekFormat;
@@ -227,6 +235,23 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mCalendar = Calendar.getInstance();
             mDate = new Date();
             initFormats();
+
+            Drawable mSpaceDrawable = getResources().getDrawable(R.drawable.space, null);
+            Drawable mMarsDrawable = getResources().getDrawable(R.drawable.mars, null);
+            Drawable mEarthDrawable = getResources().getDrawable(R.drawable.earth, null);
+            Drawable mConnDrawable = getResources().getDrawable(R.drawable.connect, null);
+            Drawable mFlagDrawable = getResources().getDrawable(R.drawable.flag, null);
+            Drawable mMarvinDrawable = getResources().getDrawable(R.drawable.marvin, null);
+            mSpaceBitmap = ((BitmapDrawable) mSpaceDrawable).getBitmap();
+            mMarsBitmap = ((BitmapDrawable) mMarsDrawable).getBitmap();
+            mEarthBitmap = ((BitmapDrawable) mEarthDrawable).getBitmap();
+            mConnBitmap = ((BitmapDrawable) mConnDrawable).getBitmap();
+            mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
+            mMarvinBitmap = ((BitmapDrawable) mMarvinDrawable).getBitmap();
+
+            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
+
         }
 
         @Override
@@ -472,28 +497,22 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mShouldDrawColons = (System.currentTimeMillis() % 1000) < 500;
 
             // Draw the background.
-            canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
-
-            Drawable mSpaceDrawable = getResources().getDrawable(R.drawable.space, null);
-            Drawable mMarsDrawable = getResources().getDrawable(R.drawable.mars, null);
-            Drawable mEarthDrawable = getResources().getDrawable(R.drawable.earth, null);
-            Drawable mConnDrawable = getResources().getDrawable(R.drawable.connect, null);
-            Drawable mFlagDrawable = getResources().getDrawable(R.drawable.flag, null);
-            Drawable mMarvinDrawable = getResources().getDrawable(R.drawable.marvin, null);
-            Bitmap mSpaceBitmap = ((BitmapDrawable) mSpaceDrawable).getBitmap();
-            Bitmap mMarsBitmap = ((BitmapDrawable) mMarsDrawable).getBitmap();
-            Bitmap mEarthBitmap = ((BitmapDrawable) mEarthDrawable).getBitmap();
-            Bitmap mConnBitmap = ((BitmapDrawable) mConnDrawable).getBitmap();
-            Bitmap mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
-            Bitmap mMarvinBitmap = ((BitmapDrawable) mMarvinDrawable).getBitmap();
-
-            canvas.drawBitmap(mSpaceBitmap, 20, 32, null);
-            canvas.drawBitmap(mMarsBitmap, 40, 332, null);
-            canvas.drawBitmap(mEarthBitmap, 330, 120, null);
-            canvas.drawBitmap(mConnBitmap, 270, 50, null);
-            canvas.drawBitmap(mFlagBitmap, 276, 274, null);
-            canvas.drawBitmap(mMarvinBitmap, 42, 226, null);
-
+            if (!isInAmbientMode() && !mMute) {
+                canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
+                canvas.drawBitmap(mSpaceBitmap, 20, 32, null);
+                canvas.drawBitmap(mMarsBitmap, 40, 332, null);
+                canvas.drawBitmap(mEarthBitmap, 330, 120, null);
+                canvas.drawBitmap(mConnBitmap, 270, 50, null);
+                canvas.drawBitmap(mFlagBitmap, 276, 274, null);
+                canvas.drawBitmap(mMarvinBitmap, 42, 226, null);
+            } else {
+                mBackgroundPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
+                mHourPaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
+                mMinutePaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
+                mColonPaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
+                canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
+                canvas.drawBitmap(mEarthBitmap, 320, 120, null);
+            }
 
             // Draw the hours.
             float x = mXOffset + 64;
@@ -522,55 +541,37 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             canvas.drawText(minuteString, x, mYOffset, mMinutePaint);
             x += mMinutePaint.measureText(minuteString);
 
-            // In unmuted interactive mode, draw a second blinking colon followed by the seconds.
-            // Otherwise, if we're in 12-hour mode, draw AM/PM
-            if (!isInAmbientMode() && !mMute) {
-                if (mShouldDrawColons) {
-////                    canvas.drawText(COLON_STRING, x, mYOffset, mColonPaint);
-                }
-                x += mColonWidth;
-////                canvas.drawText(formatTwoDigitNumber(
-////                        mCalendar.get(Calendar.SECOND)), x, mYOffset, mSecondPaint);
-            } else if (!is24Hour) {
-                x += mColonWidth;
-////                canvas.drawText(getAmPmString(
-////                        mCalendar.get(Calendar.AM_PM)), x, mYOffset, mAmPmPaint);
-            }
 
             // Only render the day of week and date if there is no peek card, so they do not bleed
             // into each other in ambient mode.
+            int week_yoff, date_yoff;
+            week_yoff = 0; date_yoff = 0;
+            if (!isInAmbientMode() && !mMute) {
+                week_yoff = 176; date_yoff = 184;
+            }
             if (getPeekCardPosition().isEmpty()) {
-                // Day of week
-                canvas.drawText(
-                        mDayOfWeekFormat.format(mDate),
-                        mXOffset + 48, mYOffset + mLineHeight - 176, mDatePaint);
-                // Date
-                canvas.drawText(
-                        mDateFormat.format(mDate),
-                        mXOffset + 48, mYOffset + mLineHeight * 2 - 184, mDatePaint);
+                canvas.drawText(mDayOfWeekFormat.format(mDate),mXOffset + 58, mYOffset + mLineHeight - week_yoff, mDatePaint);
+                canvas.drawText(mDateFormat.format(mDate),mXOffset + 58, mYOffset + mLineHeight * 2 - date_yoff, mDatePaint);
             }
 
             // Draw the battery.
-            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-            Intent batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
-            int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-            int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-            float batteryPct = level / (float)scale;
-            float battery = batteryPct * 100;
+            if (!isInAmbientMode() && !mMute) {
+                int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+                float batteryPct = level / (float) scale;
+                float battery = batteryPct * 100;
 
-//            int battery = 95;
-            int xoff, yoff;
-            xoff = 30; yoff = 80;
-////            if (battery <= 100) { dc.drawText(24+xoff, 90+yoff, Gfx.FONT_SYSTEM_XTINY, battery.format("%d") + "%", Gfx.TEXT_JUSTIFY_CENTER); }
-            mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
-            if (battery <= 75)  { mBatteryPaint.setARGB(0xFF, 0xFF, 0xFF, 0x00); }
-            if (battery <= 50)  { mBatteryPaint.setARGB(0xFF, 0xFF, 0xA5, 0x00); }
-            if (battery <= 25)  { mBatteryPaint.setARGB(0xFF, 0xFF, 0x00, 0x00); }
-            canvas.drawRect(18+xoff, 63+yoff, 16+xoff+22, 63+yoff+10, mBatteryPaint);
-            canvas.drawRect(13+xoff, 68+yoff, 13+xoff+30, 68+yoff+52, mBatteryPaint);
-            mBatteryPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
-            canvas.drawRect(16+xoff, 72+yoff, 16+xoff+24, 72+yoff+46*(100-battery)/100, mBatteryPaint);
-
+                int b_xoff, b_yoff;
+                b_xoff = 30; b_yoff = 80;
+                mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
+                if (battery <= 75) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xFF, 0x00); }
+                if (battery <= 50) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xA5, 0x00); }
+                if (battery <= 25) { mBatteryPaint.setARGB(0xFF, 0xFF, 0x00, 0x00); }
+                canvas.drawRect(18 + b_xoff, 63 + b_yoff, 16 + b_xoff + 22, 63 + b_yoff + 10, mBatteryPaint);
+                canvas.drawRect(13 + b_xoff, 68 + b_yoff, 13 + b_xoff + 30, 68 + b_yoff + 52, mBatteryPaint);
+                mBatteryPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
+                canvas.drawRect(16 + b_xoff, 72 + b_yoff, 16 + b_xoff + 24, 72 + b_yoff + 46 * (100 - battery) / 100, mBatteryPaint);
+            }
         }
 
 
