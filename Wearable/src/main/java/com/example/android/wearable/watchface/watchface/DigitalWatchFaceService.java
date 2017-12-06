@@ -167,6 +167,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         boolean mMute;
 
         Bitmap mSpaceBitmap;
+        Bitmap mDarkBitmap;
         Bitmap mMarsBitmap;
         Bitmap mEarthBitmap;
         Bitmap mConnBitmap;
@@ -237,12 +238,14 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             initFormats();
 
             Drawable mSpaceDrawable = getResources().getDrawable(R.drawable.space, null);
+            Drawable mDarkDrawable = getResources().getDrawable(R.drawable.dark, null);
             Drawable mMarsDrawable = getResources().getDrawable(R.drawable.mars, null);
             Drawable mEarthDrawable = getResources().getDrawable(R.drawable.earth, null);
             Drawable mConnDrawable = getResources().getDrawable(R.drawable.connect, null);
             Drawable mFlagDrawable = getResources().getDrawable(R.drawable.flag, null);
             Drawable mMarvinDrawable = getResources().getDrawable(R.drawable.marvin, null);
             mSpaceBitmap = ((BitmapDrawable) mSpaceDrawable).getBitmap();
+            mDarkBitmap = ((BitmapDrawable) mDarkDrawable).getBitmap();
             mMarsBitmap = ((BitmapDrawable) mMarsDrawable).getBitmap();
             mEarthBitmap = ((BitmapDrawable) mEarthDrawable).getBitmap();
             mConnBitmap = ((BitmapDrawable) mConnDrawable).getBitmap();
@@ -516,7 +519,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mMinutePaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
                 mColonPaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
-                canvas.drawBitmap(mEarthBitmap, 320, 120, null);
+                canvas.drawBitmap(mDarkBitmap, 20, 64, null);
+                canvas.drawBitmap(mEarthBitmap, 320, 128, null);
             }
 
             // Draw the hours.
