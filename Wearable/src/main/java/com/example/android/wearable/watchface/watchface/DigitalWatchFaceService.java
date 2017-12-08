@@ -29,7 +29,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -72,7 +71,7 @@ import java.util.concurrent.TimeUnit;
  * and without seconds in mute mode.
  */
 public class DigitalWatchFaceService extends CanvasWatchFaceService {
-    private static final String TAG = "DigitalWatchFaceService";
+    private static final String TAG = "Antonio-Marvin";
 
     private static final Typeface BOLD_TYPEFACE =
             Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
@@ -203,9 +202,9 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onCreate(SurfaceHolder holder) {
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
+//            if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "onCreate");
-            }
+//            }
             super.onCreate(holder);
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(DigitalWatchFaceService.this)
@@ -252,8 +251,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
             mMarvinBitmap = ((BitmapDrawable) mMarvinDrawable).getBitmap();
 
-            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-            batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
+////            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+////            batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
 
         }
 
@@ -565,10 +564,10 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             // Draw the battery.
             if (!isInAmbientMode() && !mMute) {
-                int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-                float batteryPct = level / (float) scale;
-                float battery = batteryPct * 100;
+////                int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+////                int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+////                float batteryPct = level / (float) scale;
+                float battery = 45; //// batteryPct * 100;
 
                 int b_xoff, b_yoff;
                 b_xoff = 24; b_yoff = 80;
