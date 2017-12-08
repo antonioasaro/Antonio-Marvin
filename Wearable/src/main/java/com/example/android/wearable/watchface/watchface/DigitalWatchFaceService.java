@@ -169,6 +169,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         Bitmap mDarkBitmap;
         Bitmap mMarsBitmap;
         Bitmap mEarthBitmap;
+        Bitmap mMoonBitmap;
         Bitmap mConnBitmap;
         Bitmap mFlagBitmap;
         Bitmap mMarvinBitmap;
@@ -240,6 +241,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             Drawable mDarkDrawable = getResources().getDrawable(R.drawable.dark, null);
             Drawable mMarsDrawable = getResources().getDrawable(R.drawable.mars, null);
             Drawable mEarthDrawable = getResources().getDrawable(R.drawable.earth, null);
+            Drawable mMoonDrawable = getResources().getDrawable(R.drawable.moon, null);
             Drawable mConnDrawable = getResources().getDrawable(R.drawable.connect, null);
             Drawable mFlagDrawable = getResources().getDrawable(R.drawable.flag, null);
             Drawable mMarvinDrawable = getResources().getDrawable(R.drawable.marvin, null);
@@ -247,6 +249,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mDarkBitmap = ((BitmapDrawable) mDarkDrawable).getBitmap();
             mMarsBitmap = ((BitmapDrawable) mMarsDrawable).getBitmap();
             mEarthBitmap = ((BitmapDrawable) mEarthDrawable).getBitmap();
+            mMoonBitmap = ((BitmapDrawable) mMoonDrawable).getBitmap();
             mConnBitmap = ((BitmapDrawable) mConnDrawable).getBitmap();
             mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
             mMarvinBitmap = ((BitmapDrawable) mMarvinDrawable).getBitmap();
@@ -519,7 +522,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mColonPaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
                 canvas.drawBitmap(mDarkBitmap, 20, 64, null);
-                canvas.drawBitmap(mEarthBitmap, 320, 128, null);
+                canvas.drawBitmap(mMoonBitmap, 320, 140, null);
             }
 
             // Draw the hours.
@@ -558,8 +561,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 week_yoff = 176; date_yoff = 184;
             }
             if (getPeekCardPosition().isEmpty()) {
-                canvas.drawText(mDayOfWeekFormat.format(mDate),mXOffset + 56, mYOffset + mLineHeight - week_yoff, mDatePaint);
-                canvas.drawText(mDateFormat.format(mDate),mXOffset + 56, mYOffset + mLineHeight * 2 - date_yoff, mDatePaint);
+                canvas.drawText(mDayOfWeekFormat.format(mDate),mXOffset + 64, mYOffset + mLineHeight - week_yoff, mDatePaint);
+                canvas.drawText(mDateFormat.format(mDate),mXOffset + 64, mYOffset + mLineHeight * 2 - date_yoff, mDatePaint);
             }
 
             // Draw the battery.
@@ -595,6 +598,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
                 xoff = 170; yoff = 294;
                 BoltClr.setARGB(0xFF, 0x0F, 0xDD, 0xAF);
+                BoltClr.setTextSize(24);
                 tpos = mCalendar.get(Calendar.SECOND);
                 String tstr = Integer.toString(tpos);
                 if (tpos < 10) { tstr = "0" + tstr; };
@@ -604,7 +608,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 for (int i = 1; i <= tpos; i++) {
                     ypos = yoff + (int) (10 * Math.cos(i % (360 / 30)));
                     if (i != tpos) {
-                        canvas.drawRect(xoff + 2 * i, ypos, xoff + 2 * i + 1, ypos + 1, BoltClr);
+                        canvas.drawCircle(xoff + 2 * i, ypos, 1.5f , BoltClr);
                     } else {
                         if (tpos != 60) {
                             canvas.drawText(tstr, xpos, ypos, BoltClr);
