@@ -620,13 +620,13 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                         if (tpos != 60) {
                             canvas.drawText(tstr, xpos, ypos, BoltClr);
                         } else {
-                            BoltClr.setStrokeWidth(4);
+                            BoltClr.setStrokeWidth(6);
                             BoltClr.setARGB(0xFF, 0xFF, 0x00, 0x00);
                             xpos = xpos + 8; ypos = ypos - 12;
-                            canvas.drawLine(xpos - 12, ypos + 0,  xpos + 12, ypos + 0,  BoltClr);
-                            canvas.drawLine(xpos + 0,  ypos - 12, xpos + 0,  ypos + 12, BoltClr);
-                            canvas.drawLine(xpos - 12, ypos - 12, xpos + 12, ypos + 12, BoltClr);
-                            canvas.drawLine(xpos - 12, ypos + 12, xpos + 12, ypos - 12, BoltClr);
+                            canvas.drawLine(xpos - 16, ypos + 0,  xpos + 16, ypos + 0,  BoltClr);
+                            canvas.drawLine(xpos + 0,  ypos - 16, xpos + 0,  ypos + 16, BoltClr);
+                            canvas.drawLine(xpos - 16, ypos - 16, xpos + 16, ypos + 16, BoltClr);
+                            canvas.drawLine(xpos - 16, ypos + 16, xpos + 16, ypos - 16, BoltClr);
                         }
                     }
                 }
