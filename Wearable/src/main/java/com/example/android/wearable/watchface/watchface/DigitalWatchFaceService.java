@@ -169,6 +169,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         Bitmap mDarkBitmap;
         Bitmap mMarsBitmap;
         Bitmap mEarthBitmap;
+        Bitmap mSunBitmap;
         Bitmap mMoonBitmap;
         Bitmap mConnBitmap;
         Bitmap mFlagBitmap;
@@ -241,6 +242,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             Drawable mDarkDrawable = getResources().getDrawable(R.drawable.dark, null);
             Drawable mMarsDrawable = getResources().getDrawable(R.drawable.mars, null);
             Drawable mEarthDrawable = getResources().getDrawable(R.drawable.earth, null);
+            Drawable mSunDrawable = getResources().getDrawable(R.drawable.sun, null);
             Drawable mMoonDrawable = getResources().getDrawable(R.drawable.moon, null);
             Drawable mConnDrawable = getResources().getDrawable(R.drawable.connect, null);
             Drawable mFlagDrawable = getResources().getDrawable(R.drawable.flag, null);
@@ -249,6 +251,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mDarkBitmap = ((BitmapDrawable) mDarkDrawable).getBitmap();
             mMarsBitmap = ((BitmapDrawable) mMarsDrawable).getBitmap();
             mEarthBitmap = ((BitmapDrawable) mEarthDrawable).getBitmap();
+            mSunBitmap = ((BitmapDrawable) mSunDrawable).getBitmap();
             mMoonBitmap = ((BitmapDrawable) mMoonDrawable).getBitmap();
             mConnBitmap = ((BitmapDrawable) mConnDrawable).getBitmap();
             mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
@@ -503,7 +506,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             // Draw the background.
             if (!isInAmbientMode() && !mMute) {
-                mBackgroundPaint.setARGB(0xFF, 0xFF, 0xFF, 0xFF);
+////                mBackgroundPaint.setARGB(0xFF, 0xFF, 0xFF, 0xFF);
                 mHourPaint.setARGB(0xFF, 0x80, 0x00, 0x00);
                 mMinutePaint.setARGB(0xFF, 0x80, 0x00, 0x00);
                 mColonPaint.setARGB(0xFF, 0xAA, 0x00, 0x00);
@@ -522,7 +525,11 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mColonPaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
                 canvas.drawBitmap(mDarkBitmap, 20, 64, null);
-                canvas.drawBitmap(mMoonBitmap, 320, 140, null);
+                if ((mCalendar.get(Calendar.HOUR)>=6) || (mCalendar.get(Calendar.HOUR)<=20)) {
+                    canvas.drawBitmap(mSunBitmap, 310, 148, null);
+                } else {
+                    canvas.drawBitmap(mMoonBitmap, 310, 148, null);
+                }
             }
 
             // Draw the hours.
