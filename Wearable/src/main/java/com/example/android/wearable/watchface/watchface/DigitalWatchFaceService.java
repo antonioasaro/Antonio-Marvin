@@ -29,6 +29,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -174,7 +175,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         Bitmap mConnBitmap;
         Bitmap mFlagBitmap;
         Bitmap mMarvinBitmap;
-        Intent batteryStatus;
+        Intent mBatteryStatus;
 
         Calendar mCalendar;
         Date mDate;
@@ -257,8 +258,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
             mMarvinBitmap = ((BitmapDrawable) mMarvinDrawable).getBitmap();
 
-////            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-////            batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
+            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            mBatteryStatus = getApplicationContext().registerReceiver(null, ifilter);
 
         }
 
@@ -574,13 +575,12 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             // Draw the battery.
             if (!isInAmbientMode() && !mMute) {
-////                int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-////                int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-////                float batteryPct = level / (float) scale;
-                float battery = 45; //// batteryPct * 100;
+
+                float battery = mBatteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+////                Log.d(TAG, "checkBattery " + battery);
 
                 int b_xoff, b_yoff;
-                b_xoff = 24; b_yoff = 80;
+                b_xoff = 24; b_yoff = 82;
                 mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
                 if (battery <= 75) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xFF, 0x00); }
                 if (battery <= 50) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xA5, 0x00); }
