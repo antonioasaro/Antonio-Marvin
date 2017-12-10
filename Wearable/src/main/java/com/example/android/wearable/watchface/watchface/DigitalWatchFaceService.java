@@ -165,6 +165,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         Paint mBatteryPaint;
         float mColonWidth;
         boolean mMute;
+        float mBatteryLevel;
 
         Bitmap mSpaceBitmap;
         Bitmap mDarkBitmap;
@@ -175,7 +176,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         Bitmap mConnBitmap;
         Bitmap mFlagBitmap;
         Bitmap mMarvinBitmap;
-        Intent mBatteryStatus;
+        Intent batteryStatus;
 
         Calendar mCalendar;
         Date mDate;
@@ -205,9 +206,9 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onCreate(SurfaceHolder holder) {
-//            if (Log.isLoggable(TAG, Log.DEBUG)) {
+////            if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "onCreate");
-//            }
+////            }
             super.onCreate(holder);
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(DigitalWatchFaceService.this)
@@ -232,6 +233,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                     ContextCompat.getColor(getApplicationContext(), R.color.digital_am_pm));
             mColonPaint = createTextPaint(
                     ContextCompat.getColor(getApplicationContext(), R.color.digital_colons));
+            mBatteryLevel = -1;
             mBatteryPaint = new Paint();
 
 
@@ -257,9 +259,6 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mConnBitmap = ((BitmapDrawable) mConnDrawable).getBitmap();
             mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
             mMarvinBitmap = ((BitmapDrawable) mMarvinDrawable).getBitmap();
-
-            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-            mBatteryStatus = getApplicationContext().registerReceiver(null, ifilter);
 
         }
 
@@ -513,7 +512,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mColonPaint.setARGB(0xFF, 0xAA, 0x00, 0x00);
 
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
-                canvas.drawBitmap(mSpaceBitmap, 20, 32, null);
+                canvas.drawBitmap(mSpaceBitmap, 26, 40, null);
                 canvas.drawBitmap(mMarsBitmap, 40, 332, null);
                 canvas.drawBitmap(mEarthBitmap, 330, 120, null);
                 canvas.drawBitmap(mConnBitmap, 270, 50, null);
@@ -526,7 +525,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mColonPaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
                 canvas.drawBitmap(mDarkBitmap, 20, 64, null);
-                if ((mCalendar.get(Calendar.HOUR)>=6) || (mCalendar.get(Calendar.HOUR)<=20)) {
+                if ((mCalendar.get(Calendar.HOUR)>=7) && (mCalendar.get(Calendar.HOUR)<=(7+12))) {
                     canvas.drawBitmap(mSunBitmap, 310, 148, null);
                 } else {
                     canvas.drawBitmap(mMoonBitmap, 310, 148, null);
@@ -534,7 +533,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             }
 
             // Draw the hours.
-            float x = mXOffset + 64;
+            float x = mXOffset + 60;
             String hourString;
             if (is24Hour) {
                 hourString = formatTwoDigitNumber(mCalendar.get(Calendar.HOUR_OF_DAY));
@@ -573,32 +572,30 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 canvas.drawText(mDateFormat.format(mDate),mXOffset + 64, mYOffset + mLineHeight * 2 - date_yoff, mDatePaint);
             }
 
-            // Draw the battery.
-            if (!isInAmbientMode() && !mMute) {
-
-                float battery = mBatteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-////                Log.d(TAG, "checkBattery " + battery);
-
-                int b_xoff, b_yoff;
-                b_xoff = 24; b_yoff = 82;
-                mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
-                if (battery <= 75) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xFF, 0x00); }
-                if (battery <= 50) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xA5, 0x00); }
-                if (battery <= 25) { mBatteryPaint.setARGB(0xFF, 0xFF, 0x00, 0x00); }
-                canvas.drawRect(18 + b_xoff, 63 + b_yoff, 16 + b_xoff + 22, 63 + b_yoff + 10, mBatteryPaint);
-                canvas.drawRect(13 + b_xoff, 68 + b_yoff, 13 + b_xoff + 30, 68 + b_yoff + 52, mBatteryPaint);
-                mBatteryPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
-                canvas.drawRect(16 + b_xoff, 72 + b_yoff, 16 + b_xoff + 24, 72 + b_yoff + 46 * (100 - battery) / 100, mBatteryPaint);
+            // Draw the battery level.
+            int minute = mCalendar.get(Calendar.MINUTE);
+            if ((mBatteryLevel == -1) || ((minute % 15) == 0)) {
+                IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+                batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
+                mBatteryLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             }
 
             if (!isInAmbientMode() && !mMute) {
-/*
-                if (showSeconds != true) {
-                    secsView.setColor(Gfx.COLOR_TRANSPARENT);
-                }
-                View.onUpdate(dc);
-                var TracerBitmap;
-*/
+                int b_xoff, b_yoff;
+                b_xoff = 24; b_yoff = 82git ;
+                mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
+                if (mBatteryLevel <= 75) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xFF, 0x00); }
+                if (mBatteryLevel <= 50) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xA5, 0x00); }
+                if (mBatteryLevel <= 25) { mBatteryPaint.setARGB(0xFF, 0xFF, 0x00, 0x00); }
+                canvas.drawRect(18 + b_xoff, 63 + b_yoff, 16 + b_xoff + 22, 63 + b_yoff + 10, mBatteryPaint);
+                canvas.drawRect(13 + b_xoff, 68 + b_yoff, 13 + b_xoff + 30, 68 + b_yoff + 52, mBatteryPaint);
+                mBatteryPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
+                canvas.drawRect(16 + b_xoff, 72 + b_yoff, 16 + b_xoff + 24, 72 + b_yoff + 46 * (100 - mBatteryLevel) / 100, mBatteryPaint);
+            }
+
+
+            // Draw the sinusoidal bolt.
+            if (!isInAmbientMode() && !mMute) {
                 int xoff, yoff, tpos;
                 int xpos, ypos;
                 Paint BoltClr = new Paint();
