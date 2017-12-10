@@ -526,9 +526,9 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
                 canvas.drawBitmap(mDarkBitmap, 20, 64, null);
                 if ((mCalendar.get(Calendar.HOUR)>=7) && (mCalendar.get(Calendar.HOUR)<=(7+12))) {
-                    canvas.drawBitmap(mSunBitmap, 315, 152, null);
+                    canvas.drawBitmap(mSunBitmap, 318, 156, null);
                 } else {
-                    canvas.drawBitmap(mMoonBitmap, 315, 152, null);
+                    canvas.drawBitmap(mMoonBitmap, 318, 156, null);
                 }
             }
 
