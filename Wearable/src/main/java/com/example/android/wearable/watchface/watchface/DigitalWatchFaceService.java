@@ -582,7 +582,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             if (!isInAmbientMode() && !mMute) {
                 int b_xoff, b_yoff;
-                b_xoff = 24; b_yoff = 82git ;
+                b_xoff = 24; b_yoff = 82;
                 mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
                 if (mBatteryLevel <= 75) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xFF, 0x00); }
                 if (mBatteryLevel <= 50) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xA5, 0x00); }

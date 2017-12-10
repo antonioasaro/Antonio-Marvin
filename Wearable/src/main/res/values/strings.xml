@@ -40,13 +40,15 @@
     <string name="config_background_image_complication_label">Background\nImage</string>
 
     <!-- TODO: this should be shared (needs covering all the samples with Gradle build model) -->
-    <string name="color_black">Black</string>
-    <string name="color_grey">Grey</string>
-    <string name="color_yellow">Yellow</string>
-    <string name="color_white">White</string>
-    <string name="color_red">Red</string>
-    <string name="color_blue">Blue</string>
-    <string name="color_green">Green</string>
+    <string name="color_black">black</string>
+    <string name="color_darkgrey">darkgrey</string>
+    <string name="color_grey">grey</string>
+    <string name="color_silver">silver</string>
+    <string name="color_lightgrey">lightgrey</string>
+    <string name="color_white">white</string>
+    <string name="color_red">red</string>
+    <string name="color_blue">blue</string>
+    <string name="color_green">green</string>
 
     <string name="analog_complication_config">Configure Watchface Complications</string>
     <string name="add_complication">Add Complication</string>
@@ -54,8 +56,10 @@
 
     <string-array name="color_array">
         <item>@string/color_black</item>
+        <item>@string/color_darkgrey</item>
         <item>@string/color_grey</item>
-        <item>@string/color_yellow</item>
+        <item>@string/color_silver</item>
+        <item>@string/color_lightgrey</item>
         <item>@string/color_white</item>
         <item>@string/color_red</item>
         <item>@string/color_green</item>
