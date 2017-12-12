@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -34,11 +35,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
+import android.support.wearable.complications.ComplicationData;
+import android.support.wearable.complications.ComplicationText;
+import android.support.wearable.complications.SystemProviders;
+import android.support.wearable.complications.rendering.ComplicationDrawable;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
@@ -89,6 +96,13 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
      * Update rate in milliseconds for mute mode. We update every minute, like in ambient mode.
      */
     private static final long MUTE_UPDATE_RATE_MS = TimeUnit.MINUTES.toMillis(1);
+
+    private static final int COMPLICATION_ID = 100;
+    private static final int[] COMPLICATION_IDS = {COMPLICATION_ID};
+    private static final int[][] COMPLICATION_SUPPORTED_TYPES = {
+            {ComplicationData.TYPE_SHORT_TEXT}
+    };
+
 
     @Override
     public Engine onCreateEngine() {
@@ -260,6 +274,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
             mMarvinBitmap = ((BitmapDrawable) mMarvinDrawable).getBitmap();
 
+            initializeComplications();
         }
 
         @Override
@@ -512,10 +527,10 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mColonPaint.setARGB(0xFF, 0xAA, 0x00, 0x00);
 
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
-                canvas.drawBitmap(mSpaceBitmap, 26, 40, null);
+                canvas.drawBitmap(mSpaceBitmap, 30, 40, null);
                 canvas.drawBitmap(mMarsBitmap, 40, 332, null);
                 canvas.drawBitmap(mEarthBitmap, 330, 120, null);
-                canvas.drawBitmap(mConnBitmap, 270, 50, null);
+////                canvas.drawBitmap(mConnBitmap, 270, 50, null);
                 canvas.drawBitmap(mFlagBitmap, 276, 276, null);
                 canvas.drawBitmap(mMarvinBitmap, 42, 226, null);
             } else {
@@ -581,6 +596,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             }
 
             if (!isInAmbientMode() && !mMute) {
+                drawComplications(canvas, now);
+
                 int b_xoff, b_yoff;
                 b_xoff = 24; b_yoff = 82;
                 mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
@@ -775,5 +792,77 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 Log.d(TAG, "onConnectionFailed: " + result);
             }
         }
+
+        Paint mComplicationPaint;
+        private int mComplicationsX = 148;
+        private int mComplicationsY = 372;
+        private SparseArray<ComplicationData> mActiveComplicationDataSparseArray;
+        private SparseArray<ComplicationDrawable> mComplicationDrawableSparseArray;
+
+        private void initializeComplications() {
+            Log.d(TAG, "initializeComplications()");
+
+            mActiveComplicationDataSparseArray = new SparseArray<>(COMPLICATION_IDS.length);
+            mComplicationPaint = new Paint();
+            mComplicationPaint.setColor(Color.WHITE);
+            mComplicationPaint.setTextSize(25);
+            mComplicationPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            mComplicationPaint.setAntiAlias(true);
+
+            setDefaultSystemComplicationProvider(COMPLICATION_ID, SystemProviders.STEP_COUNT, ComplicationData.TYPE_SHORT_TEXT);
+            setActiveComplications(COMPLICATION_IDS);
+        }
+
+        @Override
+        public void onComplicationDataUpdate(
+                int complicationId, ComplicationData complicationData) {
+            Log.d(TAG, "onComplicationDataUpdate() id: " + complicationId);
+
+            // Adds/updates active complication data in the array.
+            mActiveComplicationDataSparseArray.put(complicationId, complicationData);
+            invalidate();
+        }
+
+        private void drawComplications(Canvas canvas, long currentTimeMillis) {
+            ComplicationData complicationData;
+
+            for (int i = 0; i < COMPLICATION_IDS.length; i++) {
+
+                complicationData = mActiveComplicationDataSparseArray.get(COMPLICATION_IDS[i]);
+
+                if ((complicationData != null)
+                        && (complicationData.isActive(currentTimeMillis))
+                        && (complicationData.getType() == ComplicationData.TYPE_SHORT_TEXT)) {
+
+                    ComplicationText mainText = complicationData.getShortText();
+                    ComplicationText subText = complicationData.getShortTitle();
+
+                    CharSequence complicationMessage =
+                            mainText.getText(getApplicationContext(), currentTimeMillis);
+
+                    if (subText != null) {
+                        complicationMessage = TextUtils.concat(
+                                complicationMessage,
+                                " ",
+                                subText.getText(getApplicationContext(), currentTimeMillis));
+                    }
+
+                    double textWidth =
+                            mComplicationPaint.measureText(
+                                    complicationMessage,
+                                    0,
+                                    complicationMessage.length());
+
+                    canvas.drawText(
+                            complicationMessage,
+                            0,
+                            complicationMessage.length(),
+                            mComplicationsX,
+                            mComplicationsY,
+                            mComplicationPaint);
+                }
+            }
+        }
+
     }
 }
