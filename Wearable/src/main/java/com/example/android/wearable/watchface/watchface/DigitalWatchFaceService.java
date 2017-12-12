@@ -596,7 +596,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             // Draw the sinusoidal bolt.
             if (!isInAmbientMode() && !mMute) {
-                int xoff, yoff, tpos;
+                int xoff, yoff, tpos, mpos;
                 int xpos, ypos;
                 Paint BoltClr = new Paint();
 
@@ -604,11 +604,13 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 BoltClr.setARGB(0xFF, 0x0F, 0xDD, 0xAF);
                 BoltClr.setTextSize(24);
                 tpos = mCalendar.get(Calendar.SECOND);
+                mpos = mCalendar.get(Calendar.MILLISECOND)/500;
                 String tstr = Integer.toString(tpos);
                 if (tpos < 10) { tstr = "0" + tstr; };
 
                 if (tpos == 0) { tpos = 60; }
-                xpos = xoff + 2 * tpos;
+                xpos = xoff + 2 * tpos + mpos;
+                Log.d(TAG, "xpos is: "+ xpos);
                 for (int i = 1; i <= tpos; i++) {
                     ypos = yoff + (int) (10 * Math.cos(i % (360 / 30)));
                     if (i != tpos) {
