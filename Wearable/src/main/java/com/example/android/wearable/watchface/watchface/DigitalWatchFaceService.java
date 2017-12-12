@@ -217,7 +217,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                     .setShowSystemUiTime(false)
                     .build());
             Resources resources = DigitalWatchFaceService.this.getResources();
-            mYOffset = resources.getDimension(R.dimen.digital_y_offset) + 60;
+            mYOffset = resources.getDimension(R.dimen.digital_y_offset) + 64;
             mLineHeight = resources.getDimension(R.dimen.digital_line_height);
             mAmString = resources.getString(R.string.digital_am);
             mPmString = resources.getString(R.string.digital_pm);
@@ -596,27 +596,27 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             // Draw the sinusoidal bolt.
             if (!isInAmbientMode() && !mMute) {
-                int xoff, yoff, tpos, mpos;
+                int xoff, yoff, tsec, msec, toff;
                 int xpos, ypos;
                 Paint BoltClr = new Paint();
 
                 xoff = 170; yoff = 294;
                 BoltClr.setARGB(0xFF, 0x0F, 0xDD, 0xAF);
                 BoltClr.setTextSize(24);
-                tpos = mCalendar.get(Calendar.SECOND);
-                mpos = mCalendar.get(Calendar.MILLISECOND)/500;
-                String tstr = Integer.toString(tpos);
-                if (tpos < 10) { tstr = "0" + tstr; };
+                tsec = mCalendar.get(Calendar.SECOND);
+                msec = mCalendar.get(Calendar.MILLISECOND)/500;
+                String tstr = Integer.toString(tsec);
+                if (tsec < 10) { tstr = "0" + tstr; };
+                if (tsec == 0) { tsec = 60; }
 
-                if (tpos == 0) { tpos = 60; }
-                xpos = xoff + 2 * tpos + mpos;
-                Log.d(TAG, "xpos is: "+ xpos);
-                for (int i = 1; i <= tpos; i++) {
-                    ypos = yoff + (int) (10 * Math.cos(i % (360 / 30)));
-                    if (i != tpos) {
-                        canvas.drawCircle(xoff + 2 * i, ypos, 1.5f , BoltClr);
+                toff = 2 * tsec + msec;
+                xpos = xoff + toff;
+                for (int i = 1; i <= toff; i++) {
+                    ypos = yoff + (int) (10 * Math.cos((i/2) % (360 / 30)));
+                    if (i != toff) {
+                        canvas.drawCircle(xoff + i, ypos, 1.5f , BoltClr);
                     } else {
-                        if (tpos != 60) {
+                        if (tsec != 60) {
                             canvas.drawText(tstr, xpos, ypos, BoltClr);
                         } else {
                             BoltClr.setStrokeWidth(6);
