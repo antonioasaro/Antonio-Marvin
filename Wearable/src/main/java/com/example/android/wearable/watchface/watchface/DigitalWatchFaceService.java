@@ -24,7 +24,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -42,7 +41,6 @@ import android.support.wearable.complications.rendering.ComplicationDrawable;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
-import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.SparseArray;
@@ -188,6 +186,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         Bitmap mSunBitmap;
         Bitmap mMoonBitmap;
         Bitmap mConnBitmap;
+        Bitmap mFeetBitmap;
         Bitmap mFlagBitmap;
         Bitmap mMarvinBitmap;
         Intent batteryStatus;
@@ -195,6 +194,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         Calendar mCalendar;
         Date mDate;
         SimpleDateFormat mDayOfWeekFormat;
+        SimpleDateFormat mDayDateFormat;
         java.text.DateFormat mDateFormat;
 
         boolean mShouldDrawColons;
@@ -231,7 +231,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                     .setShowSystemUiTime(false)
                     .build());
             Resources resources = DigitalWatchFaceService.this.getResources();
-            mYOffset = resources.getDimension(R.dimen.digital_y_offset) + 64;
+            mYOffset = resources.getDimension(R.dimen.digital_y_offset) + 68;
             mLineHeight = resources.getDimension(R.dimen.digital_line_height);
             mAmString = resources.getString(R.string.digital_am);
             mPmString = resources.getString(R.string.digital_pm);
@@ -262,6 +262,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             Drawable mSunDrawable = getResources().getDrawable(R.drawable.sun, null);
             Drawable mMoonDrawable = getResources().getDrawable(R.drawable.moon, null);
             Drawable mConnDrawable = getResources().getDrawable(R.drawable.connect, null);
+            Drawable mFeetDrawable = getResources().getDrawable(R.drawable.feet, null);
             Drawable mFlagDrawable = getResources().getDrawable(R.drawable.flag, null);
             Drawable mMarvinDrawable = getResources().getDrawable(R.drawable.marvin, null);
             mSpaceBitmap = ((BitmapDrawable) mSpaceDrawable).getBitmap();
@@ -271,6 +272,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mSunBitmap = ((BitmapDrawable) mSunDrawable).getBitmap();
             mMoonBitmap = ((BitmapDrawable) mMoonDrawable).getBitmap();
             mConnBitmap = ((BitmapDrawable) mConnDrawable).getBitmap();
+            mFeetBitmap = ((BitmapDrawable) mFeetDrawable).getBitmap();
             mFlagBitmap = ((BitmapDrawable) mFlagDrawable).getBitmap();
             mMarvinBitmap = ((BitmapDrawable) mMarvinDrawable).getBitmap();
 
@@ -329,6 +331,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             mDayOfWeekFormat.setCalendar(mCalendar);
             mDateFormat = DateFormat.getDateFormat(DigitalWatchFaceService.this);
             mDateFormat.setCalendar(mCalendar);
+            mDayDateFormat = new SimpleDateFormat("EEE MMM d", Locale.getDefault());
+            mDayDateFormat.setCalendar(mCalendar);
         }
 
         private void registerReceiver() {
@@ -527,10 +531,11 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mColonPaint.setARGB(0xFF, 0xAA, 0x00, 0x00);
 
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
-                canvas.drawBitmap(mSpaceBitmap, 30, 40, null);
+                canvas.drawBitmap(mSpaceBitmap, 32, 40, null);
                 canvas.drawBitmap(mMarsBitmap, 40, 332, null);
                 canvas.drawBitmap(mEarthBitmap, 330, 120, null);
-////                canvas.drawBitmap(mConnBitmap, 270, 50, null);
+////                canvas.drawBitmap(mConnBitmap, 274, 50, null);
+                canvas.drawBitmap(mFeetBitmap, 110, 90, null);
                 canvas.drawBitmap(mFlagBitmap, 276, 276, null);
                 canvas.drawBitmap(mMarvinBitmap, 42, 226, null);
             } else {
@@ -539,7 +544,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mMinutePaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
                 mColonPaint.setARGB(0xFF, 0xAA, 0xAA, 0xAA);
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
-                canvas.drawBitmap(mDarkBitmap, 20, 64, null);
+                canvas.drawBitmap(mDarkBitmap, 20, 66, null);
                 if ((mCalendar.get(Calendar.HOUR_OF_DAY)>=7) && (mCalendar.get(Calendar.HOUR_OF_DAY)<=(7+12))) {
                     canvas.drawBitmap(mSunBitmap, 318, 156, null);
                 } else {
@@ -583,8 +588,12 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 week_yoff = 176; date_yoff = 184;
             }
             if (getPeekCardPosition().isEmpty()) {
-                canvas.drawText(mDayOfWeekFormat.format(mDate),mXOffset + 64, mYOffset + mLineHeight - week_yoff, mDatePaint);
-                canvas.drawText(mDateFormat.format(mDate),mXOffset + 64, mYOffset + mLineHeight * 2 - date_yoff, mDatePaint);
+                if (!isInAmbientMode() && !mMute) {
+                    canvas.drawText(mDayDateFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight - week_yoff, mDatePaint);
+                } else {
+                    canvas.drawText(mDayOfWeekFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight - week_yoff, mDatePaint);
+                    canvas.drawText(mDateFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight * 2 - date_yoff - 4, mDatePaint);
+                }
             }
 
             // Draw the battery level.
@@ -794,8 +803,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         }
 
         Paint mComplicationPaint;
-        private int mComplicationsX = 148;
-        private int mComplicationsY = 372;
+        private int mComplicationsX = 156;
+        private int mComplicationsY = 112;
         private SparseArray<ComplicationData> mActiveComplicationDataSparseArray;
         private SparseArray<ComplicationDrawable> mComplicationDrawableSparseArray;
 
@@ -804,9 +813,9 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             mActiveComplicationDataSparseArray = new SparseArray<>(COMPLICATION_IDS.length);
             mComplicationPaint = new Paint();
-            mComplicationPaint.setColor(Color.WHITE);
-            mComplicationPaint.setTextSize(25);
-            mComplicationPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            mComplicationPaint.setARGB(0xFF, 0xCC, 0xCC, 0xCC);
+            mComplicationPaint.setTextSize(32);
+            mComplicationPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
             mComplicationPaint.setAntiAlias(true);
 
             setDefaultSystemComplicationProvider(COMPLICATION_ID, SystemProviders.STEP_COUNT, ComplicationData.TYPE_SHORT_TEXT);
@@ -814,11 +823,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         }
 
         @Override
-        public void onComplicationDataUpdate(
-                int complicationId, ComplicationData complicationData) {
+        public void onComplicationDataUpdate(int complicationId, ComplicationData complicationData) {
             Log.d(TAG, "onComplicationDataUpdate() id: " + complicationId);
-
-            // Adds/updates active complication data in the array.
             mActiveComplicationDataSparseArray.put(complicationId, complicationData);
             invalidate();
         }
@@ -827,32 +833,13 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             ComplicationData complicationData;
 
             for (int i = 0; i < COMPLICATION_IDS.length; i++) {
-
                 complicationData = mActiveComplicationDataSparseArray.get(COMPLICATION_IDS[i]);
-
                 if ((complicationData != null)
                         && (complicationData.isActive(currentTimeMillis))
                         && (complicationData.getType() == ComplicationData.TYPE_SHORT_TEXT)) {
 
                     ComplicationText mainText = complicationData.getShortText();
-                    ComplicationText subText = complicationData.getShortTitle();
-
-                    CharSequence complicationMessage =
-                            mainText.getText(getApplicationContext(), currentTimeMillis);
-
-                    if (subText != null) {
-                        complicationMessage = TextUtils.concat(
-                                complicationMessage,
-                                " ",
-                                subText.getText(getApplicationContext(), currentTimeMillis));
-                    }
-
-                    double textWidth =
-                            mComplicationPaint.measureText(
-                                    complicationMessage,
-                                    0,
-                                    complicationMessage.length());
-
+                    CharSequence complicationMessage = mainText.getText(getApplicationContext(), currentTimeMillis);
                     canvas.drawText(
                             complicationMessage,
                             0,

@@ -14,7 +14,7 @@
  limitations under the License.
 -->
 <resources>
-    <color name="digital_date">#aaaaaa</color>
+    <color name="digital_date">#cccccc</color>
     <color name="digital_am_pm">#aa0000</color>
     <color name="digital_colons">#aa0000</color>
     <color name="config_activity_background">#ffffff</color>
