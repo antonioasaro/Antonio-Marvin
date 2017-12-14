@@ -231,7 +231,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                     .setShowSystemUiTime(false)
                     .build());
             Resources resources = DigitalWatchFaceService.this.getResources();
-            mYOffset = resources.getDimension(R.dimen.digital_y_offset) + 68;
+            mYOffset = resources.getDimension(R.dimen.digital_y_offset) + 69;
             mLineHeight = resources.getDimension(R.dimen.digital_line_height);
             mAmString = resources.getString(R.string.digital_am);
             mPmString = resources.getString(R.string.digital_pm);
@@ -546,22 +546,23 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
                 canvas.drawBitmap(mDarkBitmap, 20, 66, null);
                 if ((mCalendar.get(Calendar.HOUR_OF_DAY)>=7) && (mCalendar.get(Calendar.HOUR_OF_DAY)<=(7+12))) {
-                    canvas.drawBitmap(mSunBitmap, 318, 156, null);
+                    canvas.drawBitmap(mSunBitmap, 324, 156, null);
                 } else {
-                    canvas.drawBitmap(mMoonBitmap, 318, 156, null);
+                    canvas.drawBitmap(mMoonBitmap, 324, 156, null);
                 }
             }
 
             // Draw the hours.
-            float x = mXOffset + 60;
+            float x = mXOffset + 62;
+            int hour = mCalendar.get(Calendar.HOUR);
             String hourString;
+
             if (is24Hour) {
+                x = x - 16;
                 hourString = formatTwoDigitNumber(mCalendar.get(Calendar.HOUR_OF_DAY));
             } else {
-                int hour = mCalendar.get(Calendar.HOUR);
-                if (hour == 0) {
-                    hour = 12;
-                }
+                if (hour == 0) { hour = 12; }
+                if (hour > 9) { x = x - 16; }
                 hourString = String.valueOf(hour);
             }
             canvas.drawText(hourString, x, mYOffset, mHourPaint);
@@ -608,7 +609,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 drawComplications(canvas, now);
 
                 int b_xoff, b_yoff;
-                b_xoff = 24; b_yoff = 82;
+                b_xoff = 18; b_yoff = 84;
                 mBatteryPaint.setARGB(0xFF, 0x00, 0xFF, 0x00);
                 if (mBatteryLevel <= 75) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xFF, 0x00); }
                 if (mBatteryLevel <= 50) { mBatteryPaint.setARGB(0xFF, 0xFF, 0xA5, 0x00); }
