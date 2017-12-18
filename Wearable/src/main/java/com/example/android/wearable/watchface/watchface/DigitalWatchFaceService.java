@@ -231,7 +231,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                     .setShowSystemUiTime(false)
                     .build());
             Resources resources = DigitalWatchFaceService.this.getResources();
-            mYOffset = resources.getDimension(R.dimen.digital_y_offset) + 69;
+            mYOffset = resources.getDimension(R.dimen.digital_y_offset) + 76;
             mLineHeight = resources.getDimension(R.dimen.digital_line_height);
             mAmString = resources.getString(R.string.digital_am);
             mPmString = resources.getString(R.string.digital_pm);
@@ -535,7 +535,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 canvas.drawBitmap(mMarsBitmap, 40, 332, null);
                 canvas.drawBitmap(mEarthBitmap, 330, 120, null);
 ////                canvas.drawBitmap(mConnBitmap, 274, 50, null);
-                canvas.drawBitmap(mFeetBitmap, 110, 90, null);
+                canvas.drawBitmap(mFeetBitmap, 110, 88, null);
                 canvas.drawBitmap(mFlagBitmap, 276, 276, null);
                 canvas.drawBitmap(mMarvinBitmap, 42, 226, null);
             } else {
@@ -553,7 +553,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             }
 
             // Draw the hours.
-            float x = mXOffset + 62;
+            float x = mXOffset + 58;
             int hour = mCalendar.get(Calendar.HOUR);
             String hourString;
 
@@ -590,7 +590,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             }
             if (getPeekCardPosition().isEmpty()) {
                 if (!isInAmbientMode() && !mMute) {
-                    canvas.drawText(mDayDateFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight - week_yoff, mDatePaint);
+                    canvas.drawText(mDayDateFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight - week_yoff - 2, mDatePaint);
                 } else {
                     canvas.drawText(mDayOfWeekFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight - week_yoff, mDatePaint);
                     canvas.drawText(mDateFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight * 2 - date_yoff - 4, mDatePaint);
@@ -804,7 +804,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         }
 
         Paint mComplicationPaint;
-        private int mComplicationsX = 156;
+        private int mComplicationsX = 156-2;
         private int mComplicationsY = 112;
         private SparseArray<ComplicationData> mActiveComplicationDataSparseArray;
         private SparseArray<ComplicationDrawable> mComplicationDrawableSparseArray;

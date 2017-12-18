@@ -14,12 +14,12 @@
  limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Antonio-Marvin</string>
+    <string name="app_name">Marvin Watchface</string>
 
     <string name="opengl_name">Sample OpenGL</string>
     <string name="interactive_name">Sample Interactive</string>
     <string name="analog_complication">Sample Analog</string>
-    <string name="digital_name">Antonio-Marvin</string>
+    <string name="digital_name">Marvin Watchface</string>
 
     <string name="digital_background_color">Backgrounds</string>
     <string name="digital_config_name">Digital watch face configuration</string>

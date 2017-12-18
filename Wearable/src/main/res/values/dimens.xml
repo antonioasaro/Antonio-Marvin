@@ -15,7 +15,7 @@
 -->
 <resources>
     <dimen name="digital_text_size">40dp</dimen>
-    <dimen name="digital_text_size_round">50dp</dimen>
+    <dimen name="digital_text_size_round">60dp</dimen>
     <dimen name="digital_date_text_size">20dp</dimen>
     <dimen name="digital_am_pm_size">25dp</dimen>
     <dimen name="digital_am_pm_size_round">30dp</dimen>
