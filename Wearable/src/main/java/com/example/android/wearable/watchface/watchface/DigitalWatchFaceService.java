@@ -558,7 +558,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             String hourString;
 
             if (is24Hour) {
-                x = x - 16;
+                x = x - 19;
                 hourString = formatTwoDigitNumber(mCalendar.get(Calendar.HOUR_OF_DAY));
             } else {
                 if (hour == 0) { hour = 12; }
@@ -590,7 +590,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             }
             if (getPeekCardPosition().isEmpty()) {
                 if (!isInAmbientMode() && !mMute) {
-                    canvas.drawText(mDayDateFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight - week_yoff - 2, mDatePaint);
+                    canvas.drawText(mDayDateFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight - week_yoff - 5, mDatePaint);
                 } else {
                     canvas.drawText(mDayOfWeekFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight - week_yoff, mDatePaint);
                     canvas.drawText(mDateFormat.format(mDate), mXOffset + 64, mYOffset + mLineHeight * 2 - date_yoff - 4, mDatePaint);
@@ -804,7 +804,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         }
 
         Paint mComplicationPaint;
-        private int mComplicationsX = 156-2;
+        private int mComplicationsX = 153;
         private int mComplicationsY = 112;
         private SparseArray<ComplicationData> mActiveComplicationDataSparseArray;
         private SparseArray<ComplicationDrawable> mComplicationDrawableSparseArray;
