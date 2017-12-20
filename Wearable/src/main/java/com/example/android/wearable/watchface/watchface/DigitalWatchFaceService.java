@@ -531,6 +531,11 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
                 mColonPaint.setARGB(0xFF, 0xAA, 0x00, 0x00);
 
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
+                Paint shading = new Paint();
+                for (int i=0; i<bounds.height()/4; i++) {
+                    shading.setARGB(0x80, 4*i/2, 4*i/2, 4*i/2);;
+                    canvas.drawRect(0, 4*i, bounds.width(), 4*i+4, shading);
+                }
                 canvas.drawBitmap(mSpaceBitmap, 32, 40, null);
                 canvas.drawBitmap(mMarsBitmap, 40, 332, null);
                 canvas.drawBitmap(mEarthBitmap, 330, 120, null);
@@ -553,16 +558,16 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             }
 
             // Draw the hours.
-            float x = mXOffset + 58;
+            float x = mXOffset + 62;
             int hour = mCalendar.get(Calendar.HOUR);
             String hourString;
 
             if (is24Hour) {
-                x = x - 19;
+                x = x - 20;
                 hourString = formatTwoDigitNumber(mCalendar.get(Calendar.HOUR_OF_DAY));
             } else {
                 if (hour == 0) { hour = 12; }
-                if (hour > 9) { x = x - 16; }
+                if (hour > 9) { x = x - 20; }
                 hourString = String.valueOf(hour);
             }
             canvas.drawText(hourString, x, mYOffset, mHourPaint);
